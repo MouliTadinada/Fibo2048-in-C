@@ -1,0 +1,8 @@
+﻿  MainSource.cpp
+c:\users\sreekar mouli\documents\programs\c programs\fibo_2048\fibo_2048\boardutilities.h(110): warning C4101: 'i' : unreferenced local variable
+c:\users\sreekar mouli\documents\programs\c programs\fibo_2048\fibo_2048\boardutilities.h(110): warning C4101: 'j' : unreferenced local variable
+c:\users\sreekar mouli\documents\programs\c programs\fibo_2048\fibo_2048\boardutilities.h(177): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\sreekar mouli\documents\programs\c programs\fibo_2048\fibo_2048\fibo.h(72): warning C4101: 'fp' : unreferenced local variable
+c:\users\sreekar mouli\documents\programs\c programs\fibo_2048\fibo_2048\boardutilities.h(499): warning C4715: 'displayAndGetDir' : not all control paths return a value
+c:\users\sreekar mouli\documents\programs\c programs\fibo_2048\fibo_2048\userutilities.h(209): warning C4715: 'loadMidGame' : not all control paths return a value
+  Fibo_2048.vcxproj -> C:\Users\Sreekar Mouli\Documents\Programs\C Programs\Fibo_2048\Debug\Fibo_2048.exe
