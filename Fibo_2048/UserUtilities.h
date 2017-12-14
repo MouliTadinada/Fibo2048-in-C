@@ -219,22 +219,87 @@ void resumeGameList() {
 			fread(&flag, sizeof(int), 1, fp);
 			fread(&extra, sizeof(struct User), 1, fp);
 			fclose(fp);
-			gotoxy(45, 1 + i * 3);  printf("%d %s %d", extra.date, extra.month, extra.year);
-			gotoxy(60, 1 + i * 3);  printf("%s", extra.name);
-			gotoxy(75, 1 + i * 3);  printf("%s", extra.difficulty == 1 ? "2x2" : "4x4");
+			gotoxy(45, 4 + i * 2);  printf("%d %s %d", extra.date, extra.month, extra.year);
+			gotoxy(60, 4 + i * 2);  printf("%s", extra.name);
+			gotoxy(75, 4 + i * 2);  printf("%s", extra.difficulty == 1 ? "2x2" : "4x4");
 		}
 		else {
-			gotoxy(55, 1 + i * 3);  printf("EMPTY SLOT");
+			gotoxy(55, 4 + i * 2);  printf("EMPTY SLOT");
 		}
 	}
 }
 
+void delMidGame(int index) {
+	int ptr = 1, flag;
+	FILE *fp;
+	do {
+		resumeGameList();
+		rect(40, 3 + index * 2, 45, 2);
+		gotoxy(90, 15); printf("Are you sure you want to");
+		gotoxy(90, 16); printf("delete this saved file ? ");
+		gotoxy(91, 17); printf("Yes");
+		gotoxy(91, 18); printf("No");
+		gotoxy(89, 17 + ptr); printf(">");
+		gotoxy(0, 0);
+		int ch = _getch();
+		switch (ch) {
+		case 224:
+		case 0:
+			ch = _getch();
+			switch (ch) {
+			case UP_ARROW:
+				ptr--;
+				if (ptr < 0) ptr = 1;
+				break;
+
+			case DOWN_ARROW:
+				ptr++;
+				if (ptr > 1) ptr = 0;
+				break;
+			}
+			break;
+
+		case ENTER:
+			switch (ptr) {
+			case 0:
+				flag = 0;
+				fp = fopen("data", "rb+");
+				fseek(fp, start2 + index * step, SEEK_SET);
+				fwrite(&flag, sizeof(int), 1, fp);
+				fclose(fp);
+				setMidGameBits();
+				storeMidGameBits();
+				return;
+				break;
+
+			case 1:
+				return;
+			}
+
+		case ESC:
+			return;
+			break;
+
+		}
+	} while (1);
+}
+
 int resumeGameMenu() {
+	instructions = 0;
 	setMidGameBits();
 	int ptr = 0;
 	do {
 		resumeGameList();
-		rect(40, ptr * 3, 45, 2);
+		if (!instructions) {
+			gotoxy(88, 0); printf("Press F11 to open instructions");
+		}
+		else {
+			gotoxy(90, 5); printf("Arrows - to move");
+			gotoxy(90, 6); printf("ENTER - load game");
+			gotoxy(90, 7); printf("DEL - delete game");
+			gotoxy(90, 8); printf("ESC - go back to main menu");
+		}
+		rect(40, 3 + ptr * 2, 45, 2);
 		gotoxy(0, 0);
 		int ch = _getch();
 		switch (ch) {
@@ -250,6 +315,14 @@ int resumeGameMenu() {
 			case DOWN_ARROW:
 				ptr++;
 				if (ptr >= slots) ptr = 0;
+				break;
+			case DEL:
+				if (midGameBitMap[ptr]) {
+					delMidGame(ptr);
+				}
+				break;
+			case F11:
+				instructions = !instructions;
 				break;
 			}
 			break;

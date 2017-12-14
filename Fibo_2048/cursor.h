@@ -6,6 +6,9 @@
 #define RIGHT_ARROW 77
 #define ENTER 13
 #define ESC 27
+#define CTRL_S 19
+#define DEL 83
+#define F11 133
 
 #define HORIZONTAL_LINE 196
 #define VERTICAL_LINE 179
@@ -19,12 +22,14 @@
 #define BT 193
 #define PLUS 197
 
-
 #define BULLET 254
 #define BOX 219
 
 #ifndef CONSOLE_H
 #define CONSOLE_H
+
+int instructions = 0;
+int mode = 1;
 
 HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 COORD CursorPosition;

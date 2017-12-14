@@ -87,11 +87,12 @@ int difficulty() {
 
 void gameInstructions() {
 	gotoxy(90, 1); printf("INSTRUCTIONS");
-	gotoxy(90, 2); printf("________________________");
+	rect(89, 2, 30, 5);
+	//gotoxy(90, 2); printf("________________________");
 	gotoxy(90, 3); printf("1)	USE ARROWS TO MOVE");
-	gotoxy(90, 4); printf("2)	PRESS 'z' TO SAVE GAME");
-	gotoxy(90, 5); printf("3)	PRESS 'e' TO EXIT GAME");
-	gotoxy(90, 6); printf("_________________________");
+	gotoxy(90, 4); printf("2)	PRESS Ctrl+S TO SAVE");
+	gotoxy(90, 5); printf("3)	PRESS ESC TO EXIT");
+	//gotoxy(90, 6); printf("_________________________");
 }
 
 void display(int moves) {
@@ -117,7 +118,12 @@ void display(int moves) {
 	if (moves) {
 		gotoxy(45, 15); printf("Moves made: %d", moves);
 	}
-	gameInstructions();
+	if (instructions) {
+		gameInstructions();
+	}
+	else {
+		gotoxy(88, 0); printf("Press F11 to open instructions");
+	}
 }
 
 void display1(int moves) {
@@ -472,9 +478,13 @@ int displayAndGetDir(int moves) {
 		case LEFT_ARROW:
 			return 4;
 			break;
+		case F11:
+			instructions = !instructions;
+			return 5;
+			break;
 		}
 	}
-	else if (ch == 'e' || ch == 'E' || ch == ESC) {
+	else if (ch == ESC) {
 		int c = exitGame();
 		switch (c) {
 		case 1:
@@ -490,7 +500,7 @@ int displayAndGetDir(int moves) {
 			break;
 		}
 	}
-	else if (ch == 'z' || ch == 'Z') {
+	else if (ch == CTRL_S) {
 		return 0;
 	}
 	else {

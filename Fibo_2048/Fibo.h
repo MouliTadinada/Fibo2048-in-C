@@ -70,7 +70,6 @@ int quit() {
 
 void extras() {
 	FILE *fp;
-	int mode = 1;
 	do {
 		system("cls");
 
@@ -78,9 +77,9 @@ void extras() {
 		gotoxy(55, 3); printf("OPTIONS");
 
 		rect(45, 7, 30, 8);
-		gotoxy(50, 10); printf("DELETE DATA");
-		gotoxy(50, 11); printf("%s Night Mode", mode == 0 ? "Enable" : "Disable");
-		gotoxy(50, 12); printf("RETURN");
+		gotoxy(50, 10); printf("Reset Leaderboard");
+		gotoxy(50, 11); printf("Remove all saved files");
+		gotoxy(50, 12); printf("%s Night Mode", mode == 0 ? "Enable" : "Disable");
 		gotoxy(47, 10 + devPointer); printf("=>");
 		gotoxy(0, 0);
 		int ch;
@@ -110,7 +109,7 @@ void extras() {
 				if (fp != NULL) {
 					do {
 						system("cls");
-						gotoxy(40, 5); printf("ARE YOU SURE YOU WANT TO DELETE THE DATA FILES?");
+						gotoxy(40, 5); printf("Are you sure you want to reset the leaderboard?");
 						gotoxy(55, 10); printf("YES");
 						gotoxy(65, 10); printf("NO");
 						gotoxy(53 + ptr * 10, 10); printf(">>");
@@ -141,7 +140,7 @@ void extras() {
 								system("cls");
 								initializeFreeBitMap();
 								storeFreeBits();
-								gotoxy(50, 7);  printf("DELETED");
+								gotoxy(50, 7);  printf("Reset successful");
 								gotoxy(0, 0);
 								_getch();
 								ex = 1;
@@ -163,16 +162,73 @@ void extras() {
 				break;
 
 			case 1:
-				mode = !mode;
-				if (!mode) {
-					system("color 3f");
-				}
-				else {
-					system("color f3");
+				fp = fopen("data", "rb");
+				if (fp != NULL) {
+					do {
+						system("cls");
+						gotoxy(40, 5); printf("Are you sure you want to remove all saved files?");
+						gotoxy(55, 10); printf("YES");
+						gotoxy(65, 10); printf("NO");
+						gotoxy(53 + ptr * 10, 10); printf(">>");
+						gotoxy(0, 0);
+						int op;
+						op = _getch();
+						switch (op) {
+						case 224:
+						case 0:
+							op = _getch();
+							switch (op) {
+							case LEFT_ARROW:
+								ptr--;
+								if (ptr < 0) ptr = 1;
+								break;
+
+							case RIGHT_ARROW:
+								ptr++;
+								if (ptr > 1) ptr = 0;
+								break;
+							}
+							break;
+
+						case ENTER:
+							if (fp != NULL) fclose(fp);
+							switch (ptr) {
+							case 0:
+								system("cls");
+								initializeMidGameMap();
+								storeFreeBits();
+								gotoxy(50, 7);  printf("Reset successful");
+								gotoxy(0, 0);
+								_getch();
+								ex = 1;
+								break;
+
+							case 1:
+								ex = 1;
+								break;
+							}
+							break;
+
+						case ESC:
+							if (fp != NULL) fclose(fp);
+							ex = 1;
+							break;
+						}
+					} while (!ex);
 				}
 				break;
 
 			case 2:
+				mode = !mode;
+				if (!mode) {
+					system("color f0");
+				}
+				else {
+					system("color 0f");
+				}
+				break;
+
+			case 3:
 				return;
 				break;
 			}
@@ -192,12 +248,12 @@ void printMenu() {
 	gotoxy(25, 5); printf("%c%c        %c%c    %c%c   %c  %c    %c          %c       %c    %c       %c  %c    %c", BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX);
 	gotoxy(25, 6); printf("%c%c      %c%c%c%c%c%c  %c%c%c%c%c%c  %c%c%c%c%c%c          %c%c%c%c%c%c  %c%c%c%c%c%c       %c  %c%c%c%c%c%c", BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX, BOX);
 	
-	rect(45, 10, 24, 10);
+	rect(45, 10, 24, 12);
 	gotoxy(52, 12); printf("Play Game");
 	gotoxy(52, 14); printf("Resume Game");
 	gotoxy(52, 16); printf("Leaderboard");
-	//gotoxy(52, 18); printf("Options");
-	gotoxy(52, 18); printf("Quit Game");
+	gotoxy(52, 18); printf("Options");
+	gotoxy(52, 20); printf("Quit Game");
 	gotoxy(48, 12 + menuPointer * 2); printIcon();
 
 
@@ -306,6 +362,7 @@ void leaderboard() {
 }
 
 void play(int isNewGame) {
+	instructions = 0;
 	int gameOver = 0;
 	int saveTheGame = 1;
 	if (isNewGame) {
@@ -376,12 +433,12 @@ void menu() {
 			switch (op) {
 			case UP_ARROW:
 				menuPointer--;
-				if (menuPointer < 0) menuPointer = 3;
+				if (menuPointer < 0) menuPointer = 4;
 				break;
 
 			case DOWN_ARROW:
 				menuPointer++;
-				if (menuPointer > 3)  menuPointer = 0;
+				if (menuPointer > 4)  menuPointer = 0;
 				break;
 			}
 		}
@@ -395,27 +452,17 @@ void menu() {
 				if (resumeGameMenu()) {
 					play(0);
 				}
-				/*
-				if (loadMidGame() == 0) {
-					rect(69, 13, 40, 2);
-					gotoxy(71, 14); printf("NO SAVED DATA AVAILABLE");
-					gotoxy(0, 0); _getch();
-				}
-				else {
-					play(0);
-				}
-				/**/
 				break;
 
 			case 2:
 				leaderboard();
 				break;
 
-			//case 3:
-				//extras();
-				//break;
-
 			case 3:
+				extras();
+				break;
+
+			case 4:
 				if (quit()) {
 					gotoxy(0, 0);
 					thanks();
@@ -423,7 +470,6 @@ void menu() {
 				}
 				break;
 			}
-			//menuPointer = 0;
 		}
 		else if (op == ESC) {
 			if (quit()) {
