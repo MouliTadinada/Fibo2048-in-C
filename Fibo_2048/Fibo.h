@@ -69,6 +69,7 @@ int quit() {
 }
 
 void extras() {
+	int flag;
 	FILE *fp;
 	do {
 		system("cls");
@@ -137,7 +138,14 @@ void extras() {
 							if (fp != NULL) fclose(fp);
 							switch (ptr) {
 							case 0:
+								flag = 0;
 								system("cls");
+								fp = fopen("data", "rb+");
+								for (int i = 0; i < limit; i++) {
+									fseek(fp, start + i * step, SEEK_SET);
+									fwrite(&flag, sizeof(int), 1, fp);
+								}
+								fclose(fp);
 								initializeFreeBitMap();
 								storeFreeBits();
 								gotoxy(50, 7);  printf("Reset successful");
@@ -194,10 +202,17 @@ void extras() {
 							if (fp != NULL) fclose(fp);
 							switch (ptr) {
 							case 0:
+								flag = 0;
+								fp = fopen("data", "rb+");
+								for (int i = 0; i < slots; i++) {
+									fseek(fp, start2 + i * step, SEEK_SET);
+									fwrite(&flag, sizeof(int), 1, fp);
+								}
+								fclose(fp);
 								system("cls");
 								initializeMidGameMap();
 								storeFreeBits();
-								gotoxy(50, 7);  printf("Reset successful");
+								gotoxy(50, 7);  printf("Removed successfully");
 								gotoxy(0, 0);
 								_getch();
 								ex = 1;
